@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Хуваарь">
+<title>Хуваарь 2026</title>
+<style>
+/* =============================================
+   RESET
+============================================= */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { height: 100%; }
+
+/* =============================================
+THEME COLORS — dark is default
+============================================= */
+body {
+–bg:    #1a0a4a;
+–bg2:   #0d1a3a;
+–card:  #2a1a5e;
+–brd:   #3d2a7a;
+–p:     #a78bfa;
+–g:     #34d399;
+–o:     #fb923c;
+–r:     #f87171;
+–tx:    #f0eeff;
+–mu:    #9988cc;
+–mu2:   #5a4a8a;
+–navbg: #130838;
+–topbg: #130838;
+}
+body.th-light {
+–bg:    #f0eeff;
+–bg2:   #ddd8ff;
+–card:  #ffffff;
+–brd:   #c8c0f0;
+–p:     #4a28c8;
+–g:     #126e50;
+–o:     #c85a0a;
+–r:     #b81c38;
+–tx:    #0c0a22;
+–mu:    #6a6090;
+–mu2:   #b0a8d0;
+–navbg: #e8e0ff;
+–topbg: #e8e0ff;
+}
+body.th-sakura {
+–bg:    #2d0a1e;
+–bg2:   #1a0d2e;
+–card:  #3d1530;
+–brd:   #6d2550;
+–p:     #f472b6;
+–g:     #34d399;
+–o:     #fb923c;
+–r:     #f87171;
+–tx:    #ffe4f0;
+–mu:    #cc88aa;
+–mu2:   #6a3050;
+–navbg: #200818;
+–topbg: #200818;
+}
+body.th-ocean {
+–bg:    #020f20;
+–bg2:   #041830;
+–card:  #062040;
+–brd:   #0a3060;
+–p:     #38bdf8;
+–g:     #34d399;
+–o:     #fb923c;
+–r:     #f87171;
+–tx:    #e0f4ff;
+–mu:    #6aaccc;
+–mu2:   #1a4060;
+–navbg: #010a16;
+–topbg: #010a16;
+}
+
+/* =============================================
+BASE
+============================================= */
+body {
+font-family: -apple-system, BlinkMacSystemFont, ‘Helvetica Neue’, Arial, sans-serif;
+background-color: var(–bg);
+color: var(–tx);
+min-height: 100vh;
+position: fixed;
+inset: 0;
+overflow: hidden;
+}
+
+/* =============================================
+ANIMATED BACKGROUND
+============================================= */
+.bg {
+position: fixed;
+inset: 0;
+z-index: 0;
+background: linear-gradient(160deg, var(–bg) 0%, var(–bg2) 100%);
+overflow: hidden;
+}
+.orb {
+position: absolute;
+border-radius: 50%;
+filter: blur(70px);
+opacity: 0.6;
+animation: orbf linear infinite;
+}
+.o1 { width: 380px; height: 380px; background: var(–p); top: -100px; left: -80px; opacity: 0.3; animation-duration: 22s; }
+.o2 { width: 300px; height: 300px; background: var(–g); bottom: -80px; right: -60px; opacity: 0.2; animation-duration: 28s; animation-delay: -10s; }
+.o3 { width: 220px; height: 220px; background: var(–o); top: 45%; left: 35%; opacity: 0.15; animation-duration: 34s; animation-delay: -18s; }
+@keyframes orbf {
+0%   { transform: translate(0, 0) scale(1); }
+25%  { transform: translate(25px, -18px) scale(1.04); }
+50%  { transform: translate(-12px, 35px) scale(0.96); }
+75%  { transform: translate(45px, 12px) scale(1.05); }
+100% { transform: translate(0, 0) scale(1); }
+}
+.orb.off { animation-play-state: paused; }
+
+/* =============================================
+LAYOUT
+============================================= */
+.app {
+position: fixed;
+inset: 0;
+display: flex;
+flex-direction: column;
+z-index: 1;
+}
+.content {
+flex: 1;
+overflow: hidden;
+position: relative;
+}
+.page {
+display: none;
+position: absolute;
+inset: 0;
+overflow-y: auto;
+overflow-x: hidden;
+-webkit-overflow-scrolling: touch;
+padding-bottom: 70px;
+}
+.page.active { display: block; }
+
+/* =============================================
+TOPBAR
+============================================= */
+.topbar {
+padding: 12px 14px 10px;
+padding-top: max(12px, env(safe-area-inset-top));
+display: flex;
+align-items: center;
+justify-content: space-between;
+background-color: var(–topbg);
+border-bottom: 1px solid var(–brd);
+flex-shrink: 0;
+z-index: 10;
+}
+.tb-title { font-size: 1.05rem; font-weight: 700; color: var(–p); }
+.tb-sub   { font-size: 0.52rem; color: var(–mu); margin-top: 2px; letter-spacing: 0.07em; }
+.clock {
+font-size: 0.82rem;
+font-weight: 700;
+color: var(–p);
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 18px;
+padding: 4px 12px;
+font-family: ‘Courier New’, monospace;
+}
+
+/* =============================================
+BOTTOM NAV
+============================================= */
+.nav {
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+z-index: 10;
+display: flex;
+justify-content: space-around;
+background-color: var(–navbg);
+border-top: 1px solid var(–brd);
+padding: 8px 4px;
+padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+.nb {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 2px;
+background: none;
+border: none;
+color: var(–mu);
+cursor: pointer;
+padding: 4px 10px;
+border-radius: 10px;
+min-width: 56px;
+}
+.nb.active { color: var(–p); background-color: var(–card); }
+.nb .ni { font-size: 1.2rem; }
+.nb .nl { font-size: 0.45rem; letter-spacing: 0.03em; }
+
+/* =============================================
+COMMON
+============================================= */
+.card {
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 12px;
+}
+.sec-title {
+font-size: 1.15rem;
+font-weight: 700;
+color: var(–tx);
+margin-bottom: 4px;
+}
+.sec-sub {
+font-size: 0.56rem;
+color: var(–mu);
+margin-bottom: 10px;
+font-family: ‘Courier New’, monospace;
+}
+
+/* =============================================
+SCHEDULE PAGE
+============================================= */
+.sch-page {
+padding: 10px 11px 0;
+display: flex;
+flex-direction: column;
+height: 100%;
+}
+.legend {
+display: flex;
+gap: 10px;
+flex-wrap: wrap;
+margin-bottom: 8px;
+}
+.li {
+display: flex;
+align-items: center;
+gap: 4px;
+font-size: 0.6rem;
+color: var(–mu);
+font-family: ‘Courier New’, monospace;
+}
+.ld { width: 7px; height: 7px; border-radius: 50%; }
+.ld-p { background-color: var(–p); }
+.ld-g { background-color: var(–g); }
+.ld-e { background-color: var(–mu2); }
+.ld-o { background-color: var(–o); }
+
+/* grid that fills screen without scrolling */
+.sgw {
+flex: 1;
+display: flex;
+flex-direction: column;
+gap: 3px;
+min-height: 0;
+}
+.sgh, .sgr {
+display: grid;
+grid-template-columns: 40px repeat(5, 1fr);
+gap: 3px;
+}
+.sgr { flex: 1; min-height: 0; }
+
+.dh {
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 8px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 4px 2px;
+}
+.dh-n { font-size: 0.72rem; font-weight: 700; color: var(–tx); }
+.dh-s { font-size: 0.42rem; color: var(–mu); letter-spacing: 0.08em; font-family: ‘Courier New’, monospace; }
+
+.ph {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+gap: 1px;
+}
+.ph-n { font-size: 0.65rem; color: var(–mu); font-weight: 700; font-family: ‘Courier New’, monospace; }
+.ph-t { font-size: 0.35rem; color: var(–mu2); text-align: center; line-height: 1.5; font-family: ‘Courier New’, monospace; }
+
+.cell {
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 8px;
+padding: 6px 5px 5px;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+position: relative;
+cursor: pointer;
+overflow: hidden;
+}
+.cell:active { opacity: 0.75; }
+.cell.req { border-color: var(–p); border-left-width: 2px; }
+.cell.ele { border-color: var(–g); border-left-width: 2px; }
+.cell.emp { opacity: 0.15; cursor: default; pointer-events: none; }
+.cell.has-note::after {
+content: ‘✎’;
+position: absolute;
+top: 3px;
+right: 4px;
+font-size: 0.56rem;
+color: var(–o);
+}
+.cn { font-size: 0.6rem; line-height: 1.4; color: var(–tx); }
+.ct {
+display: inline-block;
+font-size: 0.46rem;
+padding: 1px 5px;
+border-radius: 18px;
+margin-top: 2px;
+font-family: ‘Courier New’, monospace;
+}
+.tr { background-color: rgba(167, 139, 250, 0.2); color: var(–p); border: 1px solid var(–p); }
+.te { background-color: rgba(52, 211, 153, 0.18); color: var(–g); border: 1px solid var(–g); }
+.np {
+font-size: 0.5rem;
+color: var(–o);
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+border-top: 1px solid var(–brd);
+padding-top: 2px;
+margin-top: 2px;
+}
+
+/* stats row */
+.ss {
+display: flex;
+gap: 6px;
+margin-top: 8px;
+margin-bottom: 6px;
+}
+.sst {
+flex: 1;
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 10px;
+padding: 7px 8px;
+text-align: center;
+}
+.sst-n { font-size: 1.2rem; font-weight: 700; }
+.sst-l { font-size: 0.46rem; color: var(–mu); margin-top: 1px; font-family: ‘Courier New’, monospace; }
+.cp { color: var(–p); }
+.cg { color: var(–g); }
+.cw { color: var(–tx); }
+
+/* =============================================
+TODO PAGE
+============================================= */
+.tp { padding: 11px; }
+
+/* progress */
+.pw { margin-bottom: 10px; }
+.pr {
+display: flex;
+justify-content: space-between;
+font-size: 0.57rem;
+color: var(–mu);
+margin-bottom: 4px;
+font-family: ‘Courier New’, monospace;
+}
+.pb {
+height: 6px;
+background-color: var(–mu2);
+border-radius: 3px;
+overflow: hidden;
+}
+.pf {
+height: 100%;
+background: linear-gradient(90deg, var(–p), var(–g));
+border-radius: 3px;
+transition: width 0.4s;
+width: 0%;
+}
+
+/* stat boxes */
+.tst {
+display: flex;
+gap: 6px;
+margin-bottom: 10px;
+}
+.ts {
+flex: 1;
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 10px;
+padding: 8px 6px;
+text-align: center;
+}
+.ts-n { font-size: 1.1rem; font-weight: 700; }
+.ts-l { font-size: 0.44rem; color: var(–mu); margin-top: 1px; font-family: ‘Courier New’, monospace; }
+
+/* filter tabs */
+.tfs {
+display: flex;
+gap: 5px;
+margin-bottom: 10px;
+overflow-x: auto;
+scrollbar-width: none;
+padding-bottom: 2px;
+}
+.tfs::-webkit-scrollbar { display: none; }
+.tf {
+flex-shrink: 0;
+font-size: 0.58rem;
+padding: 4px 10px;
+border-radius: 18px;
+border: 1px solid var(–brd);
+background-color: var(–card);
+color: var(–mu);
+cursor: pointer;
+font-family: ‘Courier New’, monospace;
+}
+.tf.active { background-color: var(–p); border-color: var(–p); color: #fff; }
+body.th-light .tf.active { color: #fff; }
+
+/* add area */
+.taa {
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 12px;
+padding: 10px;
+margin-bottom: 10px;
+}
+.tir { display: flex; gap: 7px; margin-bottom: 7px; }
+.ti {
+flex: 1;
+background-color: var(–bg);
+border: 1px solid var(–brd);
+border-radius: 9px;
+color: var(–tx);
+font-size: 0.82rem;
+padding: 8px 11px;
+outline: none;
+font-family: -apple-system, BlinkMacSystemFont, ‘Helvetica Neue’, Arial, sans-serif;
+}
+.ti:focus { border-color: var(–p); }
+.ti::placeholder { color: var(–mu2); }
+.ab {
+background-color: var(–p);
+border: none;
+border-radius: 9px;
+color: #fff;
+padding: 8px 14px;
+font-size: 1.1rem;
+cursor: pointer;
+flex-shrink: 0;
+}
+.ab:active { opacity: 0.8; }
+.tmr { display: flex; gap: 5px; flex-wrap: wrap; }
+.ms, .md {
+font-size: 0.58rem;
+padding: 4px 9px;
+border-radius: 18px;
+border: 1px solid var(–brd);
+background-color: var(–bg);
+color: var(–tx);
+outline: none;
+font-family: ‘Courier New’, monospace;
+}
+.md { flex: 1; min-width: 110px; }
+
+/* todo items */
+.tl { display: flex; flex-direction: column; gap: 6px; }
+.titem {
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 11px;
+padding: 10px 11px;
+}
+.titem.done { opacity: 0.4; }
+.titem.done .tt { text-decoration: line-through; }
+.titem.ph { border-left: 3px solid var(–r); }
+.titem.pm { border-left: 3px solid var(–o); }
+.titem.pl { border-left: 3px solid var(–g); }
+.tit { display: flex; align-items: flex-start; gap: 9px; }
+.tcb {
+width: 20px; height: 20px;
+border-radius: 6px;
+border: 2px solid var(–brd);
+cursor: pointer;
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+background-color: var(–bg);
+margin-top: 1px;
+}
+.tcb.ck { background-color: var(–g); border-color: var(–g); }
+.tcb.ck::after { content: ‘✓’; font-size: 0.7rem; color: #fff; font-weight: 700; }
+.tt { flex: 1; font-size: 0.82rem; line-height: 1.4; color: var(–tx); }
+.tdl { background: none; border: none; color: var(–mu2); cursor: pointer; font-size: 0.9rem; padding: 2px; }
+.tim { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; padding-left: 29px; }
+.ttg {
+font-size: 0.5rem;
+padding: 1px 6px;
+border-radius: 18px;
+border: 1px solid var(–brd);
+background-color: var(–bg2);
+color: var(–mu);
+font-family: ‘Courier New’, monospace;
+}
+.tdu.ov { background-color: rgba(248,113,113,0.15); color: var(–r); border-color: var(–r); }
+.tdu.td2 { background-color: rgba(251,146,60,0.15); color: var(–o); border-color: var(–o); }
+.te2 { text-align: center; padding: 36px 20px; color: var(–mu2); font-size: 0.66rem; font-family: ‘Courier New’, monospace; line-height: 2.4; }
+
+/* =============================================
+TRAIN PAGE
+============================================= */
+.trp { padding: 11px; }
+.dts { display: flex; gap: 6px; margin-bottom: 10px; }
+.dt {
+flex: 1;
+padding: 9px 5px;
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 10px;
+text-align: center;
+cursor: pointer;
+font-size: 0.62rem;
+color: var(–mu);
+font-family: ‘Courier New’, monospace;
+}
+.dt.active { background-color: var(–p); border-color: var(–p); color: #fff; }
+.nxt {
+background: linear-gradient(135deg, var(–p), var(–mu2));
+border: 1px solid var(–p);
+border-radius: 13px;
+padding: 14px;
+margin-bottom: 10px;
+}
+.nl2 { font-size: 0.58rem; opacity: 0.8; letter-spacing: 0.1em; margin-bottom: 5px; color: #fff; font-family: ‘Courier New’, monospace; }
+.nr  { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; color: #fff; }
+.nt2 { font-size: 0.92rem; font-weight: 700; margin-bottom: 4px; color: #fff; font-family: ‘Courier New’, monospace; }
+.nc  { font-size: 0.7rem; color: #fff; font-family: ‘Courier New’, monospace; }
+.nc span { background-color: rgba(255,255,255,0.2); border-radius: 5px; padding: 2px 8px; font-weight: 700; }
+.tsl {
+font-size: 0.56rem;
+color: var(–mu);
+letter-spacing: 0.09em;
+margin-bottom: 6px;
+display: flex;
+align-items: center;
+gap: 5px;
+font-family: ‘Courier New’, monospace;
+}
+.tsl::before, .tsl::after { content: ‘’; flex: 1; height: 1px; background-color: var(–brd); }
+.tc {
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 10px;
+padding: 10px 12px;
+margin-bottom: 5px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.tc.nx2 { border-color: var(–p); border-left: 3px solid var(–p); }
+.tc.ps  { opacity: 0.3; }
+.tcd { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background-color: var(–mu2); }
+.tcd.sn { background-color: var(–g); }
+.tcm { flex: 1; }
+.tcdp { font-size: 0.78rem; font-weight: 700; color: var(–tx); font-family: ‘Courier New’, monospace; }
+.tca  { font-size: 0.64rem; color: var(–mu); margin-top: 1px; font-family: ‘Courier New’, monospace; }
+.tcr  { text-align: right; flex-shrink: 0; }
+.tcm2 { font-size: 0.7rem; color: var(–p); font-weight: 700; font-family: ‘Courier New’, monospace; }
+.tcm2.sn { color: var(–g); }
+.tcm2.ps { color: var(–mu2); }
+.tcs  { font-size: 0.5rem; color: var(–mu2); margin-top: 2px; font-family: ‘Courier New’, monospace; }
+.tn   { background-color: var(–card); border: 1px solid var(–brd); border-radius: 9px; padding: 9px 12px; margin-top: 5px; font-size: 0.65rem; color: var(–mu); line-height: 1.7; }
+.tn strong { color: var(–o); }
+
+/* =============================================
+SETTINGS PAGE
+============================================= */
+.setp { padding: 11px; }
+.abt {
+background: linear-gradient(135deg, var(–p), var(–g));
+border-radius: 14px;
+padding: 18px;
+margin-bottom: 12px;
+text-align: center;
+}
+.abt-ic { font-size: 2rem; margin-bottom: 5px; }
+.abt-t  { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+.abt-s  { font-size: 0.58rem; color: rgba(255,255,255,0.85); font-family: ‘Courier New’, monospace; }
+
+.ssc {
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 14px;
+overflow: hidden;
+margin-bottom: 12px;
+}
+.ssh {
+font-size: 0.6rem;
+color: var(–mu);
+letter-spacing: 0.12em;
+padding: 10px 14px 6px;
+font-family: ‘Courier New’, monospace;
+}
+.ssr {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 11px 14px;
+border-top: 1px solid var(–brd);
+}
+.ssl-t { font-size: 0.84rem; color: var(–tx); font-weight: 600; }
+.ssl-s { font-size: 0.6rem; color: var(–mu); font-family: ‘Courier New’, monospace; margin-top: 2px; }
+
+/* toggle */
+.tgl {
+width: 44px; height: 24px;
+background-color: var(–mu2);
+border-radius: 12px;
+cursor: pointer;
+position: relative;
+border: none;
+flex-shrink: 0;
+}
+.tgl.on { background-color: var(–p); }
+.tgl::after {
+content: ‘’;
+position: absolute;
+top: 3px; left: 3px;
+width: 18px; height: 18px;
+border-radius: 50%;
+background: #fff;
+box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+transition: transform 0.2s;
+}
+.tgl.on::after { transform: translateX(20px); }
+
+/* theme grid */
+.thg { display: flex; gap: 7px; padding: 12px 14px; flex-wrap: wrap; }
+.tho {
+cursor: pointer;
+border-radius: 10px;
+overflow: hidden;
+border: 2px solid transparent;
+flex: 1;
+min-width: 58px;
+}
+.tho.active { border-color: var(–p); }
+.thp {
+height: 40px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 0.62rem;
+font-weight: 700;
+color: #fff;
+font-family: ‘Courier New’, monospace;
+}
+.thp-dk { background: linear-gradient(135deg, #1a0a4a, #0d1a3a); }
+.thp-lt { background: linear-gradient(135deg, #f0eeff, #ddd8ff); color: #4a28c8 !important; }
+.thp-sk { background: linear-gradient(135deg, #2d0a1e, #1a0d2e); }
+.thp-oc { background: linear-gradient(135deg, #020f20, #041830); }
+.thn { font-size: 0.5rem; color: var(–mu); text-align: center; padding: 4px 2px; font-family: ‘Courier New’, monospace; }
+
+/* lang */
+.lp { display: flex; gap: 6px; padding: 12px 14px; }
+.lo {
+flex: 1;
+padding: 8px;
+background-color: var(–bg2);
+border: 1px solid var(–brd);
+border-radius: 9px;
+text-align: center;
+cursor: pointer;
+font-size: 0.7rem;
+color: var(–mu);
+font-family: ‘Courier New’, monospace;
+}
+.lo.active { background-color: var(–p); border-color: var(–p); color: #fff; }
+
+/* save btn */
+.sbtn {
+background-color: var(–p);
+border: none;
+border-radius: 9px;
+color: #fff;
+padding: 8px 14px;
+font-size: 0.64rem;
+cursor: pointer;
+font-family: ‘Courier New’, monospace;
+}
+.sbtn.red { background-color: var(–r); }
+.sbtn:active { opacity: 0.8; }
+
+/* =============================================
+MODAL
+============================================= */
+.ov {
+display: none;
+position: fixed;
+inset: 0;
+background-color: rgba(0,0,0,0.7);
+z-index: 200;
+align-items: flex-end;
+justify-content: center;
+}
+.ov.open { display: flex; }
+.modal {
+background-color: var(–bg);
+border: 1px solid var(–brd);
+border-top: 2px solid var(–p);
+border-radius: 20px 20px 0 0;
+padding: 16px 18px 24px;
+width: 100%;
+max-width: 480px;
+}
+.mh { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 8px; }
+.mtt { font-size: 1rem; font-weight: 700; color: var(–tx); }
+.mc { background-color: var(–card); border: 1px solid var(–brd); color: var(–mu); font-size: 0.9rem; cursor: pointer; padding: 4px 8px; border-radius: 7px; }
+.mm { display: flex; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
+.mtg { font-size: 0.55rem; padding: 2px 8px; border-radius: 18px; background-color: var(–card); border: 1px solid var(–brd); color: var(–mu); font-family: ‘Courier New’, monospace; }
+.mti { background-color: rgba(251,146,60,0.15); color: var(–o); border-color: var(–o); }
+.modal label { display: block; font-size: 0.6rem; color: var(–mu); letter-spacing: 0.09em; margin-bottom: 6px; font-family: ‘Courier New’, monospace; }
+.modal textarea {
+width: 100%;
+background-color: var(–card);
+border: 1px solid var(–brd);
+border-radius: 9px;
+color: var(–tx);
+font-size: 0.82rem;
+padding: 10px;
+resize: none;
+height: 90px;
+outline: none;
+line-height: 1.65;
+font-family: -apple-system, BlinkMacSystemFont, ‘Helvetica Neue’, Arial, sans-serif;
+}
+.modal textarea:focus { border-color: var(–p); }
+.modal textarea::placeholder { color: var(–mu2); }
+.ma { display: flex; gap: 7px; margin-top: 10px; justify-content: flex-end; }
+.btn { font-size: 0.65rem; padding: 8px 14px; border-radius: 9px; cursor: pointer; border: none; font-family: ‘Courier New’, monospace; }
+.bs { background-color: var(–p); color: #fff; }
+.bd { background-color: var(–card); color: var(–mu); border: 1px solid var(–brd); }
+
+/* scrollbar */
+.page::-webkit-scrollbar { width: 2px; }
+.page::-webkit-scrollbar-thumb { background-color: var(–p); opacity: 0.3; border-radius: 1px; }
+</style>
+
+</head>
+
+<body id="abody">
+<!-- Apply saved theme BEFORE render -->
+<script>
+(function(){
+  var t = localStorage.getItem('theme') || 'dark';
+  document.getElementById('abody').className = 'th-' + t;
+})();
+</script>
+
+<!-- BACKGROUND -->
+
+<div class="bg">
+  <div class="orb o1" id="orb1"></div>
+  <div class="orb o2" id="orb2"></div>
+  <div class="orb o3" id="orb3"></div>
+</div>
+
+<!-- APP -->
+
+<div class="app">
+
+  <!-- TOPBAR -->
+
+  <div class="topbar">
+    <div>
+      <div class="tb-title" id="ptitle">Хичээлийн Хуваарь</div>
+      <div class="tb-sub">🌸 2026 · ХАВРЫН СЕМЕСТР</div>
+    </div>
+    <div class="clock" id="clock">00:00</div>
+  </div>
+
+  <div class="content">
+
+```
+<!-- ====== SCHEDULE ====== -->
+<div class="page active" id="page-schedule">
+  <div class="sch-page">
+    <div class="legend">
+      <div class="li"><div class="ld ld-p"></div><span data-mn="Заавал" data-jp="必修">Заавал</span></div>
+      <div class="li"><div class="ld ld-g"></div><span data-mn="Сонгон" data-jp="選択">Сонгон</span></div>
+      <div class="li"><div class="ld ld-e"></div><span data-mn="Чөлөөт" data-jp="空き">Чөлөөт</span></div>
+      <div class="li"><div class="ld ld-o"></div><span data-mn="Тэмдэглэл" data-jp="メモ">Тэмдэглэл</span></div>
+    </div>
+    <div class="sgw">
+      <!-- header -->
+      <div class="sgh">
+        <div></div>
+        <div class="dh"><div class="dh-n" data-mn="Да" data-jp="月">Да</div><div class="dh-s">MON</div></div>
+        <div class="dh"><div class="dh-n" data-mn="Мяг" data-jp="火">Мяг</div><div class="dh-s">TUE</div></div>
+        <div class="dh"><div class="dh-n" data-mn="Лха" data-jp="水">Лха</div><div class="dh-s">WED</div></div>
+        <div class="dh"><div class="dh-n" data-mn="Пүр" data-jp="木">Пүр</div><div class="dh-s">THU</div></div>
+        <div class="dh"><div class="dh-n" data-mn="Баа" data-jp="金">Баа</div><div class="dh-s">FRI</div></div>
+      </div>
+      <!-- row 1 -->
+      <div class="sgr">
+        <div class="ph"><span class="ph-n">①</span><span class="ph-t">9:00<br>10:30</span></div>
+        <div class="cell emp"></div>
+        <div class="cell emp"></div>
+        <div class="cell req" data-id="wed1" data-mn="Англи хэл" data-jp="英語" data-day-mn="Лхагва" data-day-jp="水曜" data-type="req" data-time="9:00–10:30">
+          <div><div class="cn" data-mn="Англи хэл" data-jp="英語">Англи хэл</div><span class="ct tr" data-mn="заавал" data-jp="必修">заавал</span></div>
+        </div>
+        <div class="cell ele" data-id="thu1" data-mn="Японы соёлын тухай" data-jp="日本文化論" data-day-mn="Пүрэв" data-day-jp="木曜" data-type="ele" data-time="9:00–10:30">
+          <div><div class="cn" data-mn="Японы соёлын тухай" data-jp="日本文化論">Японы соёлын тухай</div><span class="ct te" data-mn="сонгон" data-jp="選択">сонгон</span></div>
+        </div>
+        <div class="cell req" data-id="fri1" data-mn="Англи хэл" data-jp="英語" data-day-mn="Баасан" data-day-jp="金曜" data-type="req" data-time="9:00–10:30">
+          <div><div class="cn" data-mn="Англи хэл" data-jp="英語">Англи хэл</div><span class="ct tr" data-mn="заавал" data-jp="必修">заавал</span></div>
+        </div>
+      </div>
+      <!-- row 2 -->
+      <div class="sgr">
+        <div class="ph"><span class="ph-n">②</span><span class="ph-t">10:40<br>12:10</span></div>
+        <div class="cell emp"></div>
+        <div class="cell req" data-id="tue2" data-mn="Компьютерийн суурь мэдлэг A④" data-jp="コンピュータ基礎A④" data-day-mn="Мягмар" data-day-jp="火曜" data-type="req" data-time="10:40–12:10">
+          <div><div class="cn" data-mn="Компьютерийн суурь мэдлэг A④" data-jp="コンピュータ基礎A④">Компьютерийн суурь мэдлэг A④</div><span class="ct tr" data-mn="заавал" data-jp="必修">заавал</span></div>
+        </div>
+        <div class="cell ele" data-id="wed2" data-mn="Иргэний хууль + өдөр тутмын амьдрал" data-jp="民法と日常生活" data-day-mn="Лхагва" data-day-jp="水曜" data-type="ele" data-time="10:40–12:10">
+          <div><div class="cn" data-mn="Иргэний хууль + өдөр тутмын амьдрал" data-jp="民法と日常生活">Иргэний хууль + өдөр тутмын амьдрал</div><span class="ct te" data-mn="сонгон" data-jp="選択">сонгон</span></div>
+        </div>
+        <div class="cell req" data-id="thu2" data-mn="Fresher Seminar" data-jp="フレッシャーズゼミ" data-day-mn="Пүрэв" data-day-jp="木曜" data-type="req" data-time="10:40–12:10">
+          <div><div class="cn" data-mn="Fresher Seminar" data-jp="フレッシャーズゼミ">Fresher Seminar</div><span class="ct tr" data-mn="заавал" data-jp="必修">заавал</span></div>
+        </div>
+        <div class="cell ele" data-id="fri2" data-mn="Нийгмийн шинжлэх ухаан" data-jp="社会科学の基礎" data-day-mn="Баасан" data-day-jp="金曜" data-type="ele" data-time="10:40–12:10">
+          <div><div class="cn" data-mn="Нийгмийн шинжлэх ухаан" data-jp="社会科学の基礎">Нийгмийн шинжлэх ухаан</div><span class="ct te" data-mn="сонгон" data-jp="選択">сонгон</span></div>
+        </div>
+      </div>
+      <!-- row 3 -->
+      <div class="sgr">
+        <div class="ph"><span class="ph-n">③</span><span class="ph-t">12:50<br>14:20</span></div>
+        <div class="cell req" data-id="mon3" data-mn="Communication" data-jp="コミュニケーション" data-day-mn="Даваа" data-day-jp="月曜" data-type="req" data-time="12:50–14:20">
+          <div><div class="cn" data-mn="Communication" data-jp="コミュニケーション">Communication</div><span class="ct tr" data-mn="заавал" data-jp="必修">заавал</span></div>
+        </div>
+        <div class="cell req" data-id="tue3" data-mn="Японы тухай оршил (гадаад оюутнуудад)" data-jp="日本事情（留学生向け）" data-day-mn="Мягмар" data-day-jp="火曜" data-type="req" data-time="12:50–14:20">
+          <div><div class="cn" data-mn="Японы тухай оршил" data-jp="日本事情">Японы тухай оршил</div><span class="ct tr" data-mn="заавал" data-jp="必修">заавал</span></div>
+        </div>
+        <div class="cell req" data-id="wed3" data-mn="Нягтлан бодохын үндэс" data-jp="簿記の基礎" data-day-mn="Лхагва" data-day-jp="水曜" data-type="req" data-time="12:50–14:20">
+          <div><div class="cn" data-mn="Нягтлан бодохын үндэс" data-jp="簿記の基礎">Нягтлан бодохын үндэс</div><span class="ct tr" data-mn="заавал" data-jp="必修">заавал</span></div>
+        </div>
+        <div class="cell emp"></div>
+        <div class="cell req" data-id="fri3" data-mn="Эдийн засгийн үндэс" data-jp="経済学の基礎" data-day-mn="Баасан" data-day-jp="金曜" data-type="req" data-time="12:50–14:20">
+          <div><div class="cn" data-mn="Эдийн засгийн үндэс" data-jp="経済学の基礎">Эдийн засгийн үндэс</div><span class="ct tr" data-mn="заавал" data-jp="必修">заавал</span></div>
+        </div>
+      </div>
+      <!-- row 4 -->
+      <div class="sgr">
+        <div class="ph"><span class="ph-n">④</span><span class="ph-t">14:30<br>16:00</span></div>
+        <div class="cell req" data-id="mon4" data-mn="Japanese Language" data-jp="日本語" data-day-mn="Даваа" data-day-jp="月曜" data-type="req" data-time="14:30–16:00">
+          <div><div class="cn" data-mn="Japanese Language" data-jp="日本語">Japanese Language</div><span class="ct tr" data-mn="заавал" data-jp="必修">заавал</span></div>
+        </div>
+        <div class="cell emp"></div>
+        <div class="cell emp"></div>
+        <div class="cell emp"></div>
+        <div class="cell emp"></div>
+      </div>
+    </div><!-- /sgw -->
+    <div class="ss">
+      <div class="sst"><div class="sst-n cw">11</div><div class="sst-l" data-mn="НИЙТ" data-jp="合計">НИЙТ</div></div>
+      <div class="sst"><div class="sst-n cp">9</div><div class="sst-l" data-mn="ЗААВАЛ" data-jp="必修">ЗААВАЛ</div></div>
+      <div class="sst"><div class="sst-n cg">2</div><div class="sst-l" data-mn="СОНГОН" data-jp="選択">СОНГОН</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== TODO ====== -->
+<div class="page" id="page-todo">
+  <div class="tp">
+    <div class="sec-title" data-mn="📋 Даалгаварын Жагсаалт" data-jp="📋 やることリスト">📋 Даалгаварын Жагсаалт</div>
+    <div class="sec-sub" id="tddate"></div>
+    <div class="pw">
+      <div class="pr"><span data-mn="Явц" data-jp="進捗">Явц</span><span id="ppct">0%</span></div>
+      <div class="pb"><div class="pf" id="pf"></div></div>
+    </div>
+    <div class="tst">
+      <div class="ts"><div class="ts-n cw" id="tst">0</div><div class="ts-l" data-mn="Нийт" data-jp="合計">Нийт</div></div>
+      <div class="ts"><div class="ts-n cp" id="tsa">0</div><div class="ts-l" data-mn="Идэвхтэй" data-jp="未完了">Идэвхтэй</div></div>
+      <div class="ts"><div class="ts-n cg" id="tsd">0</div><div class="ts-l" data-mn="Дууссан" data-jp="完了">Дууссан</div></div>
+    </div>
+    <div class="tfs">
+      <div class="tf active" data-f="all" data-mn="Бүгд" data-jp="すべて">Бүгд</div>
+      <div class="tf" data-f="active" data-mn="Идэвхтэй" data-jp="未完了">Идэвхтэй</div>
+      <div class="tf" data-f="done" data-mn="Дууссан" data-jp="完了">Дууссан</div>
+      <div class="tf" data-f="hw" data-mn="📚 Даалгавар" data-jp="📚 宿題">📚 Даалгавар</div>
+      <div class="tf" data-f="exam" data-mn="📝 Шалгалт" data-jp="📝 試験">📝 Шалгалт</div>
+      <div class="tf" data-f="personal" data-mn="⭐ Хувийн" data-jp="⭐ 個人">⭐ Хувийн</div>
+    </div>
+    <div class="taa">
+      <div class="tir">
+        <input class="ti" id="tinp" placeholder="Даалгавар нэмэх..." maxlength="100">
+        <button class="ab" id="tadd">＋</button>
+      </div>
+      <div class="tmr">
+        <select class="ms" id="tcat">
+          <option value="hw">📚 Даалгавар</option>
+          <option value="exam">📝 Шалгалт</option>
+          <option value="personal">⭐ Хувийн</option>
+          <option value="other">📌 Бусад</option>
+        </select>
+        <select class="ms" id="tpri">
+          <option value="high">🔴 Яаралтай</option>
+          <option value="mid" selected>🟡 Дунд</option>
+          <option value="low">🟢 Бага</option>
+        </select>
+        <input class="md" id="tdue" type="date">
+      </div>
+    </div>
+    <div class="tl" id="tlist">
+      <div class="te2" id="temp">
+        <div style="font-size:2rem;margin-bottom:6px">✨</div>
+        <span data-mn="Одоогоор даалгавар байхгүй" data-jp="タスクがありません">Одоогоор даалгавар байхгүй</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== TRAIN ====== -->
+<div class="page" id="page-train">
+  <div class="trp">
+    <div class="sec-title" data-mn="🚆 Галт Тэрэгний Цаг" data-jp="🚆 電車の時刻">🚆 Галт Тэрэгний Цаг</div>
+    <div class="dts">
+      <div class="dt active" id="dto" onclick="setDir('to')" data-mn="→ Шиммачи" data-jp="→ 新町">→ Шиммачи</div>
+      <div class="dt" id="dtf" onclick="setDir('from')" data-mn="← Такасаки" data-jp="← 高崎">← Такасаки</div>
+    </div>
+    <div class="nxt">
+      <div class="nl2" data-mn="ДАРААГИЙН ГАЛТ ТЭРЭГ" data-jp="次の電車">ДАРААГИЙН ГАЛТ ТЭРЭГ</div>
+      <div class="nr" id="ntr">—</div>
+      <div class="nt2" id="ntm">—</div>
+      <div class="nc" id="ntc"></div>
+    </div>
+    <div id="trl"></div>
+    <div class="tn">⚠️ <strong data-mn="Анхаарал:" data-jp="注意:">Анхаарал:</strong> <span data-mn="Цагийн хуваарь ойролцоо тооцоолсон (JR 高崎線)." data-jp="時刻は参考値です。">Цагийн хуваарь ойролцоо тооцоолсон.</span></div>
+  </div>
+</div>
+
+<!-- ====== SETTINGS ====== -->
+<div class="page" id="page-settings">
+  <div class="setp">
+    <div class="abt">
+      <div class="abt-ic">🎓</div>
+      <div class="abt-t">Оюутны Апп</div>
+      <div class="abt-s">2026 · Хаврын Семестр · 上武大学</div>
+    </div>
+    <div class="ssc">
+      <div class="ssh" data-mn="🎨 THEME" data-jp="🎨 テーマ">🎨 THEME</div>
+      <div class="thg">
+        <div class="tho" data-t="dark" onclick="setTheme('dark')"><div class="thp thp-dk">✦ Dark</div><div class="thn" data-mn="Харанхуй" data-jp="ダーク">Харанхуй</div></div>
+        <div class="tho" data-t="light" onclick="setTheme('light')"><div class="thp thp-lt">☀ Light</div><div class="thn" data-mn="Гэгээлэг" data-jp="ライト">Гэгээлэг</div></div>
+        <div class="tho" data-t="sakura" onclick="setTheme('sakura')"><div class="thp thp-sk">🌸 Sakura</div><div class="thn" data-mn="Сакура" data-jp="さくら">Сакура</div></div>
+        <div class="tho" data-t="ocean" onclick="setTheme('ocean')"><div class="thp thp-oc">🌊 Ocean</div><div class="thn" data-mn="Далай" data-jp="オーシャン">Далай</div></div>
+      </div>
+    </div>
+    <div class="ssc">
+      <div class="ssh" data-mn="🌐 ХЭЛ" data-jp="🌐 言語">🌐 ХЭЛ</div>
+      <div class="lp">
+        <div class="lo active" id="lo-mn" onclick="setLang('mn')">🇲🇳 Монгол</div>
+        <div class="lo" id="lo-jp" onclick="setLang('jp')">🇯🇵 日本語</div>
+      </div>
+    </div>
+    <div class="ssc">
+      <div class="ssh" data-mn="⚙️ ТОХИРГОО" data-jp="⚙️ 設定">⚙️ ТОХИРГОО</div>
+      <div class="ssr">
+        <div><div class="ssl-t" data-mn="Хөдөлдөг дэвсгэр" data-jp="アニメーション">Хөдөлдөг дэвсгэр</div><div class="ssl-s">Orb animation</div></div>
+        <button class="tgl on" id="tanim" onclick="toggleAnim()"></button>
+      </div>
+    </div>
+    <div class="ssc">
+      <div class="ssh" data-mn="🗑️ ӨГӨГДӨЛ" data-jp="🗑️ データ">🗑️ ӨГӨГДӨЛ</div>
+      <div class="ssr">
+        <div class="ssl-t" data-mn="Бүх тэмдэглэл устгах" data-jp="メモ全削除">Бүх тэмдэглэл устгах</div>
+        <button class="sbtn red" onclick="clrNotes()" data-mn="Устгах" data-jp="削除">Устгах</button>
+      </div>
+      <div class="ssr">
+        <div class="ssl-t" data-mn="Бүх даалгавар устгах" data-jp="タスク全削除">Бүх даалгавар устгах</div>
+        <button class="sbtn red" onclick="clrTodos()" data-mn="Устгах" data-jp="削除">Устгах</button>
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+  </div><!-- /content -->
+
+  <!-- NAV -->
+
+  <div class="nav">
+    <button class="nb active" id="nav-schedule" onclick="goPage('schedule')"><span class="ni">📅</span><span class="nl" data-mn="Хуваарь" data-jp="時間割">Хуваарь</span></button>
+    <button class="nb" id="nav-todo" onclick="goPage('todo')"><span class="ni">✅</span><span class="nl" data-mn="Даалгавар" data-jp="タスク">Даалгавар</span></button>
+    <button class="nb" id="nav-train" onclick="goPage('train')"><span class="ni">🚆</span><span class="nl" data-mn="Галт тэрэг" data-jp="電車">Галт тэрэг</span></button>
+    <button class="nb" id="nav-settings" onclick="goPage('settings')"><span class="ni">⚙️</span><span class="nl" data-mn="Тохиргоо" data-jp="設定">Тохиргоо</span></button>
+  </div>
+
+</div><!-- /app -->
+
+<!-- MODAL -->
+
+<div class="ov" id="ov">
+  <div class="modal">
+    <div class="mh">
+      <div class="mtt" id="mttl"></div>
+      <button class="mc" id="mcls">✕</button>
+    </div>
+    <div class="mm" id="mmeta"></div>
+    <label data-mn="✎ ТЭМДЭГЛЭЛ" data-jp="✎ メモ">✎ ТЭМДЭГЛЭЛ</label>
+    <textarea id="mnote" placeholder="Жишээ нь: 201 анги · Багш Yamamoto..."></textarea>
+    <div class="ma">
+      <button class="btn bd" id="mclr" data-mn="Устгах" data-jp="削除">Устгах</button>
+      <button class="btn bs" id="msave" data-mn="Хадгалах" data-jp="保存">Хадгалах</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =============================================
+   TRAIN DATA
+============================================= */
+var TR = {
+  to:   [[5,53,6,12],[6,18,6,37],[6,34,6,53],[6,50,7,9],[7,5,7,24],[7,20,7,40],[7,36,7,55],[7,51,8,10],[8,6,8,25],[8,21,8,40],[8,31,8,50],[8,45,9,4],[9,0,9,19],[9,18,9,37],[9,35,9,54],[9,52,10,11],[10,8,10,27],[10,24,10,43],[10,40,10,59],[10,56,11,15],[11,12,11,31],[11,28,11,47],[11,44,12,3],[12,0,12,19],[12,16,12,35],[12,31,12,50],[12,45,13,4],[13,1,13,20],[13,17,13,36],[13,33,13,52],[13,49,14,8],[14,5,14,24],[14,14,14,33],[14,28,14,47],[14,44,15,3],[15,0,15,19],[15,16,15,35],[15,32,15,51],[15,48,16,7],[16,4,16,23],[16,20,16,39],[16,36,16,55],[16,52,17,11],[17,8,17,27],[17,24,17,43],[17,40,17,59],[17,56,18,15],[18,12,18,31],[18,28,18,47],[18,44,19,3],[19,0,19,19],[19,18,19,37],[19,36,19,55],[19,54,20,13],[20,12,20,31],[20,36,20,55],[21,0,21,19],[21,30,21,49],[22,0,22,19],[22,30,22,49]],
+  from: [[5,32,5,50],[5,58,6,16],[6,20,6,38],[6,42,7,0],[7,0,7,18],[7,16,7,34],[7,32,7,50],[7,48,8,6],[8,4,8,22],[8,20,8,38],[8,36,8,54],[8,52,9,10],[9,8,9,26],[9,24,9,42],[9,40,9,58],[9,56,10,14],[10,12,10,30],[10,28,10,46],[10,38,10,56],[10,55,11,13],[11,8,11,26],[11,24,11,42],[11,40,11,58],[11,56,12,14],[12,12,12,30],[12,20,12,38],[12,36,12,54],[12,52,13,10],[13,8,13,26],[13,24,13,42],[13,40,13,58],[13,56,14,14],[14,12,14,30],[14,28,14,46],[14,48,15,6],[15,4,15,22],[15,20,15,38],[15,36,15,54],[15,52,16,10],[16,9,16,27],[16,25,16,43],[16,41,16,59],[16,57,17,15],[17,13,17,31],[17,29,17,47],[17,45,18,3],[18,1,18,19],[18,17,18,35],[18,33,18,51],[18,49,19,7],[19,5,19,23],[19,23,19,41],[19,41,19,59],[20,0,20,18],[20,20,20,38],[20,48,21,6],[21,20,21,38],[21,52,22,10],[22,24,22,42],[22,56,23,14]]
+};
+
+/* =============================================
+   STATE
+============================================= */
+var S = {
+  lang:  localStorage.getItem('lang')  || 'mn',
+  theme: localStorage.getItem('theme') || 'dark',
+  anim:  localStorage.getItem('anim')  !== '0',
+  notes: JSON.parse(localStorage.getItem('n26') || '{}'),
+  todos: JSON.parse(localStorage.getItem('t26') || '[]'),
+  page: 'schedule', cell: null, dir: 'to', flt: 'all'
+};
+
+var PT = {
+  schedule: {mn:'Хичээлийн Хуваарь', jp:'時間割'},
+  todo:     {mn:'Даалгаварын Жагсаалт', jp:'やることリスト'},
+  train:    {mn:'Галт Тэрэгний Цаг', jp:'電車の時刻'},
+  settings: {mn:'Тохиргоо', jp:'設定'}
+};
+var CAT = {hw:{mn:'📚 Даалгавар',jp:'📚 宿題'}, exam:{mn:'📝 Шалгалт',jp:'📝 試験'}, personal:{mn:'⭐ Хувийн',jp:'⭐ 個人'}, other:{mn:'📌 Бусад',jp:'📌 その他'}};
+var PRI = {high:{mn:'🔴 Яаралтай',jp:'🔴 緊急'}, mid:{mn:'🟡 Дунд',jp:'🟡 普通'}, low:{mn:'🟢 Бага',jp:'🟢 低い'}};
+var PO  = {high:0, mid:1, low:2};
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmt(h,m){ return ('0'+h).slice(-2)+':'+('0'+m).slice(-2); }
+function nm(){ var n=new Date(); return n.getHours()*60+n.getMinutes(); }
+function tstr(){ var n=new Date(); return n.getFullYear()+'-'+('0'+(n.getMonth()+1)).slice(-2)+'-'+('0'+n.getDate()).slice(-2); }
+function fmtDue(d){
+  if(!d) return null;
+  var t=tstr();
+  if(d<t) return {l:'⚠️ '+d, c:'ov'};
+  if(d===t) return {l:'🔔 Өнөөдөр', c:'td2'};
+  return {l:'📅 '+d, c:''};
+}
+
+/* =============================================
+   LANG
+============================================= */
+function applyLang(){
+  var jp = S.lang === 'jp';
+  document.querySelectorAll('[data-mn][data-jp]').forEach(function(el){
+    if(el.children.length === 0) el.textContent = jp ? el.dataset.jp : el.dataset.mn;
+  });
+  document.getElementById('ptitle').textContent = PT[S.page][S.lang];
+  document.getElementById('lo-mn').className = 'lo' + (!jp ? ' active' : '');
+  document.getElementById('lo-jp').className = 'lo' + (jp ? ' active' : '');
+  renderTodos(); renderTrains();
+}
+function setLang(l){ S.lang=l; localStorage.setItem('lang',l); applyLang(); }
+
+/* =============================================
+   THEME
+============================================= */
+function setTheme(t){
+  S.theme = t;
+  localStorage.setItem('theme', t);
+  document.getElementById('abody').className = 'th-' + t;
+  document.querySelectorAll('.tho').forEach(function(o){ o.classList.toggle('active', o.dataset.t === t); });
+}
+
+/* =============================================
+   ANIM
+============================================= */
+function toggleAnim(){
+  S.anim = !S.anim;
+  localStorage.setItem('anim', S.anim ? '1' : '0');
+  document.getElementById('tanim').classList.toggle('on', S.anim);
+  document.querySelectorAll('.orb').forEach(function(o){ o.classList.toggle('off', !S.anim); });
+}
+
+/* =============================================
+   CLOCK
+============================================= */
+function tick(){
+  var n = new Date();
+  document.getElementById('clock').textContent = ('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2);
+  if(S.page === 'train') renderTrains();
+}
+tick(); setInterval(tick, 30000);
+
+/* =============================================
+   PAGE NAV
+============================================= */
+function goPage(p){
+  document.querySelectorAll('.page').forEach(function(e){ e.classList.remove('active'); });
+  document.querySelectorAll('.nb').forEach(function(e){ e.classList.remove('active'); });
+  document.getElementById('page-'+p).classList.add('active');
+  document.getElementById('nav-'+p).classList.add('active');
+  S.page = p;
+  document.getElementById('ptitle').textContent = PT[p][S.lang];
+  if(p === 'train') renderTrains();
+  if(p === 'todo')  updStats();
+}
+
+/* =============================================
+   TRAIN
+============================================= */
+function setDir(d){
+  S.dir = d;
+  document.getElementById('dto').classList.toggle('active', d==='to');
+  document.getElementById('dtf').classList.toggle('active', d==='from');
+  renderTrains();
+}
+function renderTrains(){
+  var jp=S.lang==='jp', now=nm(), data=TR[S.dir];
+  var fr=S.dir==='to'?'高崎':'新町', to=S.dir==='to'?'新町':'高崎';
+  var wins = data.filter(function(t){ var d=t[0]*60+t[1]; return d>=now-2 && d<=now+30; });
+  var upcom = data.filter(function(t){ return t[0]*60+t[1]>=now-2; });
+  var nxt = upcom[0] || null;
+  if(nxt){
+    var df=nxt[0]*60+nxt[1]-now;
+    document.getElementById('ntr').textContent = fr+' → '+to;
+    document.getElementById('ntm').textContent = fmt(nxt[0],nxt[1])+' 発  →  '+fmt(nxt[2],nxt[3])+' 着';
+    document.getElementById('ntc').innerHTML = df<=0 ? '<span>'+(jp?'まもなく発車':'Зоогдоно')+'</span>' : '<span>'+df+(jp?'分後':'мин дараа')+'</span>';
+  } else {
+    document.getElementById('ntr').textContent = jp?'本日の運行終了':'Галт тэрэг дууссан';
+    document.getElementById('ntm').textContent = '';
+    document.getElementById('ntc').innerHTML = '';
+  }
+  var list = document.getElementById('trl'); list.innerHTML = '';
+  if(!wins.length){
+    list.innerHTML = '<div style="text-align:center;padding:18px;font-size:.68rem;color:var(--mu2)">'+(jp?'30分以内の電車なし':'30 минутад галт тэрэг байхгүй')+'</div>';
+    return;
+  }
+  var lb=document.createElement('div'); lb.className='tsl'; lb.textContent=jp?'今後30分':'Дараагийн 30 минут'; list.appendChild(lb);
+  wins.forEach(function(t, i){
+    var dep=t[0]*60+t[1], df=dep-now, isPast=df<0, isNxt=i===0&&!isPast;
+    var c=document.createElement('div'); c.className='tc'+(isNxt?' nx2':'')+(isPast?' ps':'');
+    var dot=document.createElement('div'); dot.className='tcd'+(isNxt?' sn':'');
+    var m=document.createElement('div'); m.className='tcm';
+    m.innerHTML='<div class="tcdp">'+fmt(t[0],t[1])+' 発 → '+fmt(t[2],t[3])+' 着</div><div class="tca">'+fr+'→'+to+' · 高崎線</div>';
+    var r=document.createElement('div'); r.className='tcr';
+    var minTxt = isPast ? '<div class="tcm2 ps">'+(jp?'発車済':'Гарсан')+'</div>'
+                       : df===0 ? '<div class="tcm2 sn">'+(jp?'今すぐ':'Одоо!')+'</div>'
+                       : '<div class="tcm2'+(df<=5?' sn':'')+'">'+df+(jp?'分':'мин')+'</div>';
+    r.innerHTML = minTxt + '<div class="tcs">~19'+(jp?'分':'мин')+'</div>';
+    c.appendChild(dot); c.appendChild(m); c.appendChild(r); list.appendChild(c);
+  });
+}
+
+/* =============================================
+   NOTES
+============================================= */
+function saveN(){ localStorage.setItem('n26', JSON.stringify(S.notes)); }
+function refN(){
+  document.querySelectorAll('.cell[data-id]').forEach(function(cell){
+    var id=cell.dataset.id, old=cell.querySelector('.np');
+    if(old) old.remove();
+    cell.classList.remove('has-note');
+    if(S.notes[id]){
+      cell.classList.add('has-note');
+      var el=document.createElement('div'); el.className='np'; el.textContent=S.notes[id]; cell.appendChild(el);
+    }
+  });
+}
+document.querySelectorAll('.cell[data-id]').forEach(function(cell){
+  cell.addEventListener('click', function(){
+    S.cell = cell.dataset.id;
+    var jp = S.lang==='jp';
+    document.getElementById('mttl').textContent = jp ? cell.dataset.jp : cell.dataset.mn;
+    var t = cell.dataset.type;
+    document.getElementById('mmeta').innerHTML =
+      '<span class="mtg">'+(jp?cell.dataset.dayJp:cell.dataset.dayMn)+'</span>' +
+      '<span class="mtg mti">🕐 '+cell.dataset.time+'</span>' +
+      '<span class="mtg '+(t==='req'?'tr':'te')+'">'+(t==='req'?(jp?'必修':'заавал'):(jp?'選択':'сонгон'))+'</span>';
+    document.getElementById('mnote').value = S.notes[S.cell] || '';
+    document.getElementById('ov').classList.add('open');
+    setTimeout(function(){ document.getElementById('mnote').focus(); }, 250);
+  });
+});
+document.getElementById('msave').onclick = function(){
+  var v=document.getElementById('mnote').value.trim();
+  if(v) S.notes[S.cell]=v; else delete S.notes[S.cell];
+  saveN(); refN(); document.getElementById('ov').classList.remove('open');
+};
+document.getElementById('mclr').onclick = function(){
+  document.getElementById('mnote').value=''; delete S.notes[S.cell];
+  saveN(); refN(); document.getElementById('ov').classList.remove('open');
+};
+document.getElementById('mcls').onclick = function(){ document.getElementById('ov').classList.remove('open'); };
+document.getElementById('ov').addEventListener('click', function(e){ if(e.target.id==='ov') document.getElementById('ov').classList.remove('open'); });
+function clrNotes(){ if(confirm(S.lang==='jp'?'メモを全て削除しますか？':'Бүх тэмдэглэлийг устгах уу?')){ S.notes={}; saveN(); refN(); } }
+
+/* =============================================
+   TODO
+============================================= */
+function saveT(){ localStorage.setItem('t26', JSON.stringify(S.todos)); }
+function updStats(){
+  var tot=S.todos.length, done=S.todos.filter(function(t){ return t.done; }).length, act=tot-done;
+  var pct = tot>0 ? Math.round(done/tot*100) : 0;
+  document.getElementById('tst').textContent = tot;
+  document.getElementById('tsa').textContent = act;
+  document.getElementById('tsd').textContent = done;
+  document.getElementById('ppct').textContent = pct+'%';
+  document.getElementById('pf').style.width = pct+'%';
+  var n=new Date(), days=['Ням','Да','Мяг','Лха','Пүр','Баа','Бям'], dj=['日','月','火','水','木','金','土'];
+  var jp=S.lang==='jp';
+  document.getElementById('tddate').textContent = jp
+    ? n.getFullYear()+'年'+(n.getMonth()+1)+'月'+n.getDate()+'日('+dj[n.getDay()]+')'
+    : n.getFullYear()+'-'+('0'+(n.getMonth()+1)).slice(-2)+'-'+('0'+n.getDate()).slice(-2)+' '+days[n.getDay()];
+}
+function renderTodos(){
+  updStats();
+  var list=document.getElementById('tlist'); list.querySelectorAll('.titem').forEach(function(e){ e.remove(); });
+  var jp=S.lang==='jp', f=S.flt;
+  var items = S.todos.slice();
+  if(f==='active')   items=items.filter(function(t){ return !t.done; });
+  else if(f==='done') items=items.filter(function(t){ return t.done; });
+  else if(['hw','exam','personal','other'].indexOf(f)>=0) items=items.filter(function(t){ return t.cat===f; });
+  items.sort(function(a,b){
+    if(a.done!==b.done) return a.done?1:-1;
+    var pa=(PO[a.pri]||1), pb=(PO[b.pri]||1);
+    if(pa!==pb) return pa-pb;
+    if(a.due&&b.due) return a.due.localeCompare(b.due);
+    if(a.due) return -1; if(b.due) return 1; return 0;
+  });
+  document.getElementById('temp').style.display = items.length ? 'none' : 'block';
+  items.forEach(function(td){
+    var item=document.createElement('div');
+    item.className='titem'+(td.done?' done':'')+' p'+(td.pri?td.pri[0]:'m');
+    var di=fmtDue(td.due), cl=CAT[td.cat]||CAT.other, pl=PRI[td.pri]||PRI.mid;
+    item.innerHTML =
+      '<div class="tit">'+
+        '<div class="tcb'+(td.done?' ck':'')+'" data-id="'+td.id+'"></div>'+
+        '<div class="tt">'+esc(td.text)+'</div>'+
+        '<button class="tdl" data-id="'+td.id+'">✕</button>'+
+      '</div>'+
+      '<div class="tim">'+
+        '<span class="ttg">'+(jp?cl.jp:cl.mn)+'</span>'+
+        '<span class="ttg">'+(jp?pl.jp:pl.mn)+'</span>'+
+        (di?'<span class="ttg tdu '+di.c+'">'+di.l+'</span>':'')+
+      '</div>';
+    list.appendChild(item);
+  });
+}
+document.getElementById('tlist').addEventListener('click', function(e){
+  var cb=e.target.closest('.tcb'), del=e.target.closest('.tdl');
+  if(cb){ var t=S.todos.find(function(t){ return t.id==cb.dataset.id; }); if(t){ t.done=!t.done; saveT(); renderTodos(); } }
+  if(del){ S.todos=S.todos.filter(function(t){ return t.id!=del.dataset.id; }); saveT(); renderTodos(); }
+});
+function addTodo(){
+  var inp=document.getElementById('tinp'), text=inp.value.trim(); if(!text) return;
+  S.todos.unshift({id:Date.now(), text:text, cat:document.getElementById('tcat').value, pri:document.getElementById('tpri').value, due:document.getElementById('tdue').value||null, done:false});
+  inp.value=''; document.getElementById('tdue').value=''; saveT(); renderTodos();
+}
+document.getElementById('tadd').onclick = addTodo;
+document.getElementById('tinp').addEventListener('keydown', function(e){ if(e.key==='Enter') addTodo(); });
+document.querySelectorAll('.tf').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.tf').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active'); S.flt=btn.dataset.f; renderTodos();
+  });
+});
+function clrTodos(){ if(confirm(S.lang==='jp'?'タスクを全て削除しますか？':'Бүх даалгаврыг устгах уу?')){ S.todos=[]; saveT(); renderTodos(); } }
+
+/* =============================================
+   INIT
+============================================= */
+// apply saved theme to picker
+document.querySelectorAll('.tho').forEach(function(o){ o.classList.toggle('active', o.dataset.t===S.theme); });
+// apply anim state
+if(!S.anim){ document.querySelectorAll('.orb').forEach(function(o){ o.classList.add('off'); }); document.getElementById('tanim').classList.remove('on'); }
+// set min date
+document.getElementById('tdue').min = tstr();
+// render
+refN(); renderTodos(); applyLang();
+</script>
+
+</body>
+</html>
