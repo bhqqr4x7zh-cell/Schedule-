@@ -1,3 +1,6 @@
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#07070e">
+
 <!DOCTYPE html>
 
 <html lang="mn">
@@ -1079,3 +1082,8 @@ draw();
 
 </body>
 </html>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
